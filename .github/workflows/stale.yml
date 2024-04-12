@@ -46,20 +46,20 @@ jobs:
     
     - name: Debug branches
       run: |
-          echo "=== Current Branches ==="
-          git branch -a
+        echo "=== Current Branches ==="
+        git branch -a
           
-          echo "=== Remote Branches ==="
-          git remote show origin
+        echo "=== Remote Branches ==="
+        git remote show origin
           
-          echo "=== Checkout Develop ==="
-          git checkout develop
-          git status
+        echo "=== Checkout Develop ==="
+        git checkout develop
+        git status
           
-          echo "=== Checkout Stage ==="
-          git checkout stage
-          git status
+        echo "=== Checkout Stage ==="
+        git checkout stage
+        git status
           
-          echo "=== Checkout Master ==="
-          git checkout master 
-          git status
+        echo "=== Checkout Master ==="
+        git checkout master 
+        git status
