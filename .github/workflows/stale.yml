@@ -37,7 +37,7 @@ jobs:
       - name: Merge to Target Branch
         run: |
           git fetch origin ${{ github.event.pull_request.head.ref }}
-          git checkout ${{ github.event.pull_request.base.ref }}
-          git merge --no-ff ${{ github.event.pull_request.head.ref }} -m "Merge pull request #${{ github.event.number }} from ${{ github.event.pull_request.head.ref }}"
+          git checkout ${{ github.event.pull_request.head.ref }}
+          git merge --no-ff ${{ github.event.pull_request.base.ref }} -m "Merge pull request #${{ github.event.number }} from ${{ github.event.pull_request.head.ref }} into ${{ github.event.pull_request.base.ref }}"
           git push origin ${{ github.event.pull_request.base.ref }}
       
