@@ -41,3 +41,19 @@ jobs:
       run: |
         git fetch origin
         git checkout ${{ github.event.pull_request.base.ref }}
+
+  post-merge-build:
+    needs: merge
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Install Dependencies
+      run: npm install
+      continue-on-error: false
+        
+    - name: Build
+      run: npm run build
+      continue-on-error: false
