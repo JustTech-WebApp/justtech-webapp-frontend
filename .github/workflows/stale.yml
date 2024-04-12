@@ -5,6 +5,9 @@ on:
     branches:
       - develop
       - stage
+      - master
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   merge:
@@ -23,9 +26,7 @@ jobs:
         continue-on-error: false
 
       - name: Merge to Target Branch
-        if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage') && github.actor != 'admin_username'
         run: |
-          git fetch origin $GITHUB_REF
-          git checkout $GITHUB_REF
-          git merge --no-ff $GITHUB_HEAD_REF
-          git push origin $GITHUB_REF
+          git checkout origin/${{ github.event.pull_request.base.ref }}
+          git merge --ff-only ${{ github.event.pull_request.head.ref }}
+          git push origin ${{ github.event.pull_request.base.ref }}
