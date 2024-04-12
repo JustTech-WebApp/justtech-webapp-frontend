@@ -31,18 +31,45 @@ jobs:
         git branch -a
         git remote show origin
         
+name: Merge to Develop/Stage
+
+on:
+  push:
+    branches:
+      - develop
+      - stage 
+      - master
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+
+  merge:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Install Dependencies
+      run: npm install
+      continue-on-error: false
+        
+    - name: Build
+      run: npm run build
+      continue-on-error: false
+      
+    - name: Debug branches
+      run: |
+        git branch -a
+        git remote show origin
+        
     - name: Update local branches
       run: |
         git fetch origin
         git checkout develop
         git checkout stage  
         git checkout master
-        
-    - name: Merge to Target Branch
-      run: |
-        git checkout ${{ github.event.pull_request.base.ref }}
-        git merge --ff-only ${{ github.event.pull_request.head.ref }}
-        git push origin ${{ github.event.pull_request.base.ref }}
     
     - name: Debug branches
       run: |
@@ -63,3 +90,37 @@ jobs:
         echo "=== Checkout Master ==="
         git checkout master 
         git status
+
+    - name: Merge to Target Branch
+      run: |
+        git checkout origin/${{ github.event.pull_request.base.ref }}
+        git merge --ff-only ${{ github.event.pull_request.head.ref }}
+        git push origin/${{ github.event.pull_request.base.ref }}
+    
+
+    - name: Debug branches
+      run: |
+        echo "=== Current Branches ==="
+        git branch -a
+          
+        echo "=== Remote Branches ==="
+        git remote show origin
+          
+        echo "=== Checkout Develop ==="
+        git checkout develop
+        git status
+          
+        echo "=== Checkout Stage ==="
+        git checkout stage
+        git status
+          
+        echo "=== Checkout Master ==="
+        git checkout master 
+        git status
+
+    - name: Merge to Target Branch
+      run: |
+        git checkout ${{ github.event.pull_request.base.ref }}
+        git merge --ff-only ${{ github.event.pull_request.head.ref }}
+        git push origin ${{ github.event.pull_request.base.ref }}
+    
