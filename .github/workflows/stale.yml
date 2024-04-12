@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         run: npm run build
-        continue-on-error: true
+        continue-on-error: false
 
       - name: Merge to Target Branch
         run: |
