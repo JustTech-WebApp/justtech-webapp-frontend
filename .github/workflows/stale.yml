@@ -41,13 +41,3 @@ jobs:
       run: |
         git fetch origin
         git checkout ${{ github.event.pull_request.base.ref }}
-        
-    - name: Merge to Target Branch
-      run: |
-        # Check if the branch exists before attempting to merge
-        if git rev-parse --verify origin/${{ github.event.pull_request.head.ref }}; then
-          git merge --ff-only ${{ github.event.pull_request.head.ref }}
-          git push origin ${{ github.event.pull_request.base.ref }}
-        else
-          echo "Branch ${{ github.event.pull_request.head.ref }} does not exist. Skipping merge."
-        fi
