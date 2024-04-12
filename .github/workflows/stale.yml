@@ -1,32 +1,43 @@
-name: Merge to Develop/Stage
+name: Main
 
 on:
   push:
     branches:
-      - develop
-      - stage
-      - master
+      - '*'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
-  merge:
+
+  build-and-test:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      
+    - name: Install Dependencies
+      run: npm install
+      continue-on-error: false
+        
+    - name: Build
+      run: npm run build
+      continue-on-error: false
+      
+    - name: Run Tests
+      run: npm test
+      continue-on-error: true
 
-      - name: Install Dependencies
-        run: npm install
-        continue-on-error: false
-
-      - name: Build
-        run: npm run build
-        continue-on-error: true
-
-      - name: Merge to Target Branch
-        if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master') && github.actor != 'admin_username'
-        run: |
-          git fetch origin $GITHUB_REF
-          git checkout $GITHUB_REF
-          git merge --no-ff $GITHUB_HEAD_REF
-          git push origin $GITHUB_REF
+  merge:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+        
+    - name: Update local branches
+      run: |
+        git fetch origin
+        git checkout ${{ github.event.pull_request.base.ref }}
