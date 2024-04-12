@@ -1,3 +1,6 @@
+
+
+
 name: Merge to Develop/Stage
 
 on:
@@ -6,14 +9,25 @@ on:
       - develop
       - stage
       - master
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   merge:
+    if: ${{ github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/develop') || (github.event_name == 'push' && github.ref == 'refs/heads/stage') || (github.event_name == 'push' && github.ref == 'refs/heads/master') }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+
+      - name: Check Target Branch
+        if: github.event_name == 'pull_request'
+        run: |
+          if [[ ${{ github.event.pull_request.base.ref }} != 'develop' && ${{ github.event.pull_request.base.ref }} != 'stage' && ${{ github.event.pull_request.base.ref }} != 'master' ]]; then
+            echo "Merge not allowed. Target branch must be develop, stage, or master.";
+            exit 1;
+          fi
 
       - name: Install Dependencies
         run: npm install
@@ -24,9 +38,9 @@ jobs:
         continue-on-error: false
 
       - name: Merge to Target Branch
-        if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master') && github.actor != 'admin_username'
         run: |
-          git fetch origin $GITHUB_REF
-          git checkout $GITHUB_REF
-          git merge --no-ff $GITHUB_HEAD_REF
-          git push origin $GITHUB_REF
+          git fetch origin ${{ github.event.pull_request.head.ref }}
+          git checkout ${{ github.event.pull_request.head.ref }}
+          git merge --no-ff ${{ github.event.pull_request.base.ref }} -m "Merge pull request #${{ github.event.number }} from ${{ github.event.pull_request.head.ref }} into ${{ github.event.pull_request.base.ref }}"
+          git push origin ${{ github.event.pull_request.base.ref }}
+      
