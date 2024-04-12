@@ -27,6 +27,6 @@ jobs:
 
       - name: Merge to Target Branch
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
+          git checkout origin/${{ github.event.pull_request.base.ref }}
           git merge --ff-only ${{ github.event.pull_request.head.ref }}
           git push origin ${{ github.event.pull_request.base.ref }}
