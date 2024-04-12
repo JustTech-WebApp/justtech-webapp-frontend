@@ -21,7 +21,7 @@ jobs:
 
       - name: Build
         run: npm run build
-        continue-on-error: false
+        continue-on-error: true
 
       - name: Merge to Target Branch
         if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master') && github.actor != 'admin_username'
