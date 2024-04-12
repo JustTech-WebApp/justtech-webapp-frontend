@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - stage
+      - master
 
 jobs:
   merge:
@@ -23,7 +24,7 @@ jobs:
         continue-on-error: false
 
       - name: Merge to Target Branch
-        if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage') && github.actor != 'admin_username'
+        if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage' || github.ref == 'refs/heads/master') && github.actor != 'admin_username'
         run: |
           git fetch origin $GITHUB_REF
           git checkout $GITHUB_REF
