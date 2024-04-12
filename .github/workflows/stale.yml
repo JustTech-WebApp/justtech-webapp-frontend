@@ -5,17 +5,10 @@ on:
     branches:
       - develop
       - stage
-      - master
 
-      
 jobs:
   merge:
     runs-on: ubuntu-latest
-    if: |
-      github.ref == 'refs/heads/develop' ||
-      github.ref == 'refs/heads/stage' ||
-      github.ref == 'refs/heads/master' &&
-      github.actor != secrets.ADMIN_USERNAME
 
     steps:
       - name: Checkout Repository
@@ -23,11 +16,14 @@ jobs:
 
       - name: Install Dependencies
         run: npm install
+        continue-on-error: false
 
       - name: Build
         run: npm run build
+        continue-on-error: false
 
       - name: Merge to Target Branch
+        if: success() && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/stage') && github.actor != 'admin_username'
         run: |
           git fetch origin $GITHUB_REF
           git checkout $GITHUB_REF
